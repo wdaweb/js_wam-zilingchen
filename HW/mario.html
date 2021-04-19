@@ -18,9 +18,10 @@
         }
 
         .container {
+
             margin: auto;
             height: 100%;
-            width: 75%;
+            width: 80%;
             position: relative;
             background-image: url(./images/background.png);
             background-size: cover;
@@ -45,7 +46,7 @@
         }
 
         .holes {
-            width: 80px;
+            width: 120px;
             height: 120px;
             background-position: bottom;
             position: relative;
@@ -96,9 +97,9 @@
         #brick1 {
             position: absolute;
             left: 50%;
-            top: 48%;
+            top: 52%;
             transform: translate(-50%, -50%);
-            z-index: 1;
+            /* z-index: 1; */
 
         }
 
@@ -106,9 +107,18 @@
 
             position: absolute;
             left: 50%;
-            top: 69%;
+            top: 77%;
             transform: translate(-50%, -50%);
-            z-index: 1;
+
+        }
+
+        #brick3 {
+
+            position: absolute;
+            left: 50%;
+            top: 64%;
+            transform: translate(-50%, -50%);
+            /* z-index: 1; */
         }
 
         #cloud1 {
@@ -142,7 +152,7 @@
             }
 
             to {
-                transform: translateX(-1100px);
+                transform: translateX(-2000px);
             }
         }
     </style>
@@ -153,9 +163,10 @@
         <div id="cloud1"><img src="./images/cloud.png" alt=""></div>
         <div id="cloud2"><img src="./images/cloud.png" alt=""></div>
         <div id="cloud3"><img src="./images/cloud.png" alt=""></div>
-        <div id="brick1"><img src="./images/bottom.png" width="300px" alt=""></div>
-        <div id="brick2"><img src="./images/bottom.png" width="300px" alt=""></div>
-        <table id="game" cellspacing="20px">
+        <div id="brick1"><img src="./images/bottom.png" alt=""></div>
+        <div id="brick2"><img src="./images/bottom.png" alt=""></div>
+        <div id="brick3"><img src="./images/bottom.png" alt=""></div>
+        <table id="game">
             <tr>
                 <td class="holes" id="hole7"><img src="./pipe.png"></td>
                 <td class="holes" id="hole8"><img src="./pipe.png"></td>
@@ -246,7 +257,7 @@
                     highscore.score = score
                     highscore.name = prompt('最高分! 請輸入名字')
                     if (highscore.name === null || highscore.name.length === 0) {
-                        highscore.name = '路人'
+                        highscore.name = ''
                     }
                     textHighscorePlayer.innerText = highscore.name
                     textHighscore.innerText = highscore.score
