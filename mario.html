@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./NES.css-2.3.0/docs/style.css">
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .container {
+            margin: auto;
+            height: 100%;
+            width: 75%;
+            position: relative;
+            background-image: url(./images/background.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        #btn-start {
+            position: absolute;
+            right: 5%;
+            top: 5%;
+        }
+
+        #game {
+            margin: auto;
+            position: absolute;
+            left: 50%;
+            top: 56%;
+            transform: translate(-50%, -50%);
+            cursor: url(./images/mario.png) 25 50, auto;
+        }
+
+        .holes {
+            width: 80px;
+            height: 120px;
+            background-position: bottom;
+            position: relative;
+
+        }
+
+        .holes>img {
+            position: absolute;
+            bottom: 0px;
+        }
+
+        .blue {
+            background-image: url(./images/faf.png);
+            background-repeat: no-repeat;
+            background-position: 10px;
+            animation: down 1s linear forwards;
+        }
+
+        @keyframes down {
+            from {
+                background-position: 20px 10px;
+
+            }
+
+            to {
+                background-position: 20px 50px;
+            }
+        }
+
+        .red {
+            background-image: url(./images/flower.png);
+            background-repeat: no-repeat;
+            background-position: 10px;
+            animation: jump 1s linear forwards;
+        }
+
+        @keyframes jump {
+            from {
+                background-position: 20px 50px;
+
+            }
+
+            to {
+                background-position: 20px 10px;
+            }
+        }
+
+        #brick1 {
+            position: absolute;
+            left: 50%;
+            top: 48%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+
+        }
+
+        #brick2 {
+
+            position: absolute;
+            left: 50%;
+            top: 69%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        #cloud1 {
+            position: absolute;
+            top: 10%;
+            right: -20%;
+            animation: cloud 10s linear infinite;
+        }
+
+        #cloud2 {
+            position: absolute;
+            top: 20%;
+            right: -40%;
+            animation: cloud 9s 3s linear infinite;
+        }
+
+        #cloud3 {
+            position: absolute;
+            top: 15%;
+            right: -40%;
+            animation: cloud 9s 6s linear infinite;
+        }
+
+        .holes>img {
+            width: 80px;
+        }
+
+        @keyframes cloud {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-1100px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="cloud1"><img src="./images/cloud.png" alt=""></div>
+        <div id="cloud2"><img src="./images/cloud.png" alt=""></div>
+        <div id="cloud3"><img src="./images/cloud.png" alt=""></div>
+        <div id="brick1"><img src="./images/bottom.png" width="300px" alt=""></div>
+        <div id="brick2"><img src="./images/bottom.png" width="300px" alt=""></div>
+        <table id="game" cellspacing="20px">
+            <tr>
+                <td class="holes" id="hole7"><img src="./pipe.png"></td>
+                <td class="holes" id="hole8"><img src="./pipe.png"></td>
+                <td class="holes" id="hole9"><img src="./pipe.png"></td>
+            </tr>
+
+            <tr>
+                <td class="holes" id="hole4"><img src="./pipe.png"></td>
+                <td class="holes" id="hole5"><img src="./pipe.png"></td>
+                <td class="holes" id="hole6"><img src="./pipe.png"></td>
+            </tr>
+            <tr>
+                <td class="holes" id="hole7"><img src="./pipe.png"></td>
+                <td class="holes" id="hole2"><img src="./pipe.png"></td>
+                <td class="holes" id="hole3"><img src="./pipe.png"></td>
+            </tr>
+        </table>
+
+        <input type="button" value="Start" id="btn-start" style="background-image: url(.);">
+        <!-- 時間 -->
+        <span class="nes-text is-disabled">TIME <span id="text-countdown">20</span></span>
+        <!-- 分數 -->
+        <span class="nes-text is-disabled">
+            <i class="nes-icon coin is-medium"></i>X<span id="text-score">0</span>
+        </span>
+
+
+        <!-- 最高分紀錄 -->
+        <i class="nes-icon trophy is-medium"></i><span class="nes-text is-disabled">
+
+            Player: <span id="highscore-player">-</span></span>
+        <span class="nes-text is-disabled">
+            <i class="nes-icon coin is-small"></i><span id="highscore-score">-</span>
+        </span>
+    </div>
+    <script>
+        const btnStart = document.getElementById('btn-start')
+        const holes = document.getElementsByClassName('holes')
+        const textScore = document.getElementById('text-score')
+        const textHighscorePlayer = document.getElementById('highscore-player')
+        const textHighscore = document.getElementById('highscore-score')
+        const textCountdown = document.getElementById('text-countdown')
+        let score = 0
+        let timer = 0
+        let countdown = 20
+        let highscore = { name: '', score: 0 }
+        const highStorage = JSON.parse(localStorage.getItem('wam'))
+        if (highStorage != null) {
+            highscore = highStorage
+            textHighscorePlayer.innerText = highscore.name
+            textHighscore.innerText = highscore.score
+        }
+
+        btnStart.onclick = () => {
+            btnStart.disabled = true
+            score = 0
+            textScore.innerText = score
+            countdown = 20
+            textCountdown.innerText = countdown
+
+            timer = setInterval(game, 1000)
+            game()
+        }
+
+        const game = () => {
+            for (const hole of holes) {
+                hole.classList.remove('red')
+                hole.classList.remove('blue')
+            }
+
+            for (let i = 0; i < 2; i++) {
+                const random = Math.floor(Math.random() * 9)
+                holes[random].classList.add('red')
+            }
+            countdown--
+            textCountdown.innerText = countdown
+            if (countdown <= 0) {
+                clearInterval(timer)
+                alert(`你得到${score}分`)
+
+                btnStart.disabled = false
+                for (const hole of holes) {
+                    hole.classList.remove('red')
+                    hole.classList.remove('blue')
+                }
+
+                if (score > highscore.score) {
+                    highscore.score = score
+                    highscore.name = prompt('最高分! 請輸入名字')
+                    if (highscore.name === null || highscore.name.length === 0) {
+                        highscore.name = '路人'
+                    }
+                    textHighscorePlayer.innerText = highscore.name
+                    textHighscore.innerText = highscore.score
+                    localStorage.setItem('wam', JSON.stringify(highscore))
+                }
+            }
+        }
+
+        for (const hole of holes) {
+            hole.onclick = () => {
+                if (hole.classList.contains('red')) {
+                    hole.classList.replace('red', 'blue')
+
+                    score++
+                    textScore.innerText = score
+                }
+
+            }
+        }
+
+        document.onkeydown = (event) => {
+
+            if (!isNaN(event.key) && event.code.includes('Numpad')) {
+                const target = document.getElementById(`hole${event.key}`)
+                if (target !== null && target.classList.contains('red')) {
+                    target.classList.replace('red', 'blue')
+                    score++
+                    textScore.innerText = score
+                }
+
+            }
+        }
+    </script>
+</body>
+
+</html>
